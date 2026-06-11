@@ -2,44 +2,48 @@ import axios from 'axios'
 import React, { useEffect, useState } from 'react'
 import ShowTask from './ShowTask'
 import Toast from './Toast';
+import { Oval } from 'react-loader-spinner';
+import './Inputbox.css';
 
 export default function Inputbox({ inputValue, setInputValue }) {
 
     const [data, setData] = useState([]);
-    const [loading, setIsLoading] = useState(false);
+    const [loader, setLoader] = useState(false);
     const [IsSubmit, setIsSubmit] = useState(true);
     const [editId, setEditId] = useState(null);
     const [toast, setToast] = useState(null);
 
-    async function insertTodo(todo) {
-        console.log('insert todo running...')
-        if (IsSubmit) {
-            const data = await axios.post('https://6a2278075c6103532869db36.mockapi.io/todo', {
-                task: inputValue
+    async function insertTodo() {
+        setLoader(true);
+        try {
+            if (IsSubmit) {
+                await axios.post('https://6a2278075c6103532869db36.mockapi.io/todo', {
+                    task: inputValue
+                });
+                setToast("Task Created Successfully!");
+            } else {
+                await axios.put(`https://6a2278075c6103532869db36.mockapi.io/todo/${editId}`, {
+                    task: inputValue
+                });
+                setToast("Task Updated Successfully!");
             }
-            );
-            setToast("Task Created Successfully!");
 
+            setInputValue("");
+            setIsSubmit(true);
+            await getData();
+        } finally {
+            setLoader(false);
         }
-        else {
-            await axios.put(`https://6a2278075c6103532869db36.mockapi.io/todo/${editId}`, {
-                task: inputValue
-            });
-            setToast("Task Updated Successfully!");
-
-            setTimeout(() => {
-                setToast(null);
-            }, 3000);
-        }
-        setInputValue("");
-        setIsSubmit(true);
-        getData(); // refresh
     }
-    async function getData() { // bring the data
-        setIsLoading(true);
-        const data = await axios.get('https://6a2278075c6103532869db36.mockapi.io/todo');
-        setData(data.data);
-        setIsLoading(false);
+
+    async function getData() {
+        setLoader(true);
+        try {
+            const response = await axios.get('https://6a2278075c6103532869db36.mockapi.io/todo');
+            setData(response.data);
+        } finally {
+            setLoader(false);
+        }
     }
 
     useEffect(() => {
@@ -47,25 +51,29 @@ export default function Inputbox({ inputValue, setInputValue }) {
     }, [])
 
     async function editTask(todo) {
-
-        setInputValue(todo.task);
-        setEditId(todo.id);
-        setIsSubmit(false);
-
-
-        getData();
+        setLoader(true);
+        try {
+            setInputValue(todo.task);
+            setEditId(todo.id);
+            setIsSubmit(false);
+            await getData();
+        } finally {
+            setLoader(false);
+        }
     }
 
     async function deleteTask(id) {
-        await axios.delete(`https://6a2278075c6103532869db36.mockapi.io/todo/${id}`);
-
-        setToast("Task Deleted!");
-
-        setTimeout(() => {
-            setToast(null);
-        }, 3000);
-
-        getData();
+        setLoader(true);
+        try {
+            await axios.delete(`https://6a2278075c6103532869db36.mockapi.io/todo/${id}`);
+            setToast("Task Deleted!");
+            setTimeout(() => {
+                setToast(null);
+            }, 3000);
+            await getData();
+        } finally {
+            setLoader(false);
+        }
     }
 
 
@@ -83,6 +91,21 @@ export default function Inputbox({ inputValue, setInputValue }) {
 
     return (
         <>
+            {loader ? (
+                <div className="loader-overlay">
+                    <Oval
+                        className="oval-spinner"
+                        height={80}
+                        width={80}
+                        color="#4CAF50"
+                        visible={true}
+                        ariaLabel="oval-loading"
+                        secondaryColor="white"
+                        strokeWidth={3}
+                        strokeWidthSecondary={3}
+                    />
+                </div>
+            ) : ("" )}
 
             <Toast message={toast} />
 
@@ -102,9 +125,13 @@ export default function Inputbox({ inputValue, setInputValue }) {
 
             <button
                 style={buttonStyle}
+                className={loader ? 'button-disabled' : ''}
                 onClick={insertTodo}
-            >{IsSubmit ? 'Submit' : 'Edit'}</button>
-            <ShowTask inputValue={inputValue} data={data} loading={loading} editTask={editTask} deleteTask={deleteTask} />
+                disabled={loader}
+            >
+                {IsSubmit ? 'Submit' : 'Edit'}
+            </button>
+            <ShowTask inputValue={inputValue} data={data} loading={loader} editTask={editTask} deleteTask={deleteTask} />
         </>
 
     )

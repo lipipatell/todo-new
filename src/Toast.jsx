@@ -11,6 +11,7 @@ export default function Toast({ message }) {
         color: "white",
         padding: "10px",
         borderRadius: "5px",
+        display: message ? "block" : "none",
       }}
     >
       {message}
