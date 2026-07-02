@@ -6,7 +6,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 9999;
+  z-index: 1000;
 }
 
 .button-disabled {
@@ -19,3 +19,21 @@
   height: 80px;
 }
 
+.input-fixed {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background: white;
+    z-index: 1000;
+    padding: 10px;
+    text-align: center;
+    box-shadow: 0 2px 5px gray;
+}
+
+
+.task-container {
+    margin-top: 120px;
+    height: calc(100vh - 120px);
+    overflow-y: auto;
+}

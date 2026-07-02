@@ -9,8 +9,6 @@ function App() {
   return (
     <>
 
-    <Toast message={toastMsg} />
-
     <Inputbox
       inputValue={inputValue}
       setInputValue={setInputValue}

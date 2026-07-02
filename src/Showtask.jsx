@@ -44,7 +44,12 @@ export default function ShowTask({data,loading,editTask,deleteTask}) {
             boxShadow: "0 2px 5px rgba(0,0,0,0.2)"
           }}
         >
-          <h3>{todo.task}</h3>
+          <div>
+            <h3 style={{ margin: 0 }}>{todo.task}</h3>
+            <p style={{ margin: "6px 0 0", color: "#666", fontSize: "13px" }}>
+              Added: {todo.createdAt ? new Date(todo.createdAt).toLocaleString() : 'No timestamp'}
+            </p>
+          </div>
 
           <div>
             <button
@@ -53,13 +58,15 @@ export default function ShowTask({data,loading,editTask,deleteTask}) {
                 backgroundColor: "orange",
                 color: "white",
                 border: "none",
-                padding: "10px 15px",
+                padding: "10px 12px",
                 marginRight: "10px",
                 borderRadius: "5px",
-                cursor: "pointer"
+                cursor: "pointer",
+                fontSize: "16px"
               }}
+              aria-label="Edit task"
             >
-              Edit
+              ✎
             </button>
 
             <button
@@ -68,12 +75,14 @@ export default function ShowTask({data,loading,editTask,deleteTask}) {
                 backgroundColor: "red",
                 color: "white",
                 border: "none",
-                padding: "10px 15px",
+                padding: "10px 12px",
                 borderRadius: "5px",
-                cursor: "pointer"
+                cursor: "pointer",
+                fontSize: "16px"
               }}
+              aria-label="Delete task"
             >
-              Delete
+              ✕
             </button>
           </div>
         </div>

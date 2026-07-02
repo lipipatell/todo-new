@@ -17,15 +17,27 @@ export default function Inputbox({ inputValue, setInputValue }) {
         setLoader(true);
         try {
             if (IsSubmit) {
-                await axios.post('https://6a2278075c6103532869db36.mockapi.io/todo', {
-                    task: inputValue
+                await axios.post('https://6a45f7aba268c8be2ce6eed3.mockapi.io/todo', {
+                    task: inputValue,
+                    createdAt: new Date().toISOString()
                 });
+
+
                 setToast("Task Created Successfully!");
+                setTimeout(() => {
+                    setToast(null);
+                }, 3000);
+
+
             } else {
-                await axios.put(`https://6a2278075c6103532869db36.mockapi.io/todo/${editId}`, {
+                await axios.put(`https://6a45f7aba268c8be2ce6eed3.mockapi.io/todo/${editId}`, {
                     task: inputValue
                 });
+
                 setToast("Task Updated Successfully!");
+                setTimeout(() => {
+                    setToast(null);
+                }, 3000);
             }
 
             setInputValue("");
@@ -39,7 +51,7 @@ export default function Inputbox({ inputValue, setInputValue }) {
     async function getData() {
         setLoader(true);
         try {
-            const response = await axios.get('https://6a2278075c6103532869db36.mockapi.io/todo');
+            const response = await axios.get('https://6a45f7aba268c8be2ce6eed3.mockapi.io/todo');
             setData(response.data);
         } finally {
             setLoader(false);
@@ -65,7 +77,8 @@ export default function Inputbox({ inputValue, setInputValue }) {
     async function deleteTask(id) {
         setLoader(true);
         try {
-            await axios.delete(`https://6a2278075c6103532869db36.mockapi.io/todo/${id}`);
+            await axios.delete(`https://6a45f7aba268c8be2ce6eed3.mockapi.io/todo/${id}`);
+            
             setToast("Task Deleted!");
             setTimeout(() => {
                 setToast(null);
@@ -105,33 +118,40 @@ export default function Inputbox({ inputValue, setInputValue }) {
                         strokeWidthSecondary={3}
                     />
                 </div>
-            ) : ("" )}
+            ) : ("")}
 
             <Toast message={toast} />
 
-            <input
-                placeholder='Enter Task'
-                style={style}
-                value={inputValue}
-                onChange={(e) => {
-                    setInputValue(e.target.value);
-                }}
-                onKeyDown={(e) => {
-                    if (e.key === "Enter") {
-                        insertTodo();
-                    }
-                }}
-            />
+            <div className="input-fixed">
+                <input
+                    placeholder='Enter Task'
+                    style={style}
+                    value={inputValue}
+                    onChange={(e) => {
+                        setInputValue(e.target.value);
+                    }}
+                    onKeyDown={(e) => {
+                        if (e.key === "Enter") {
+                            insertTodo();
+                        }
+                    }}
+                />
 
-            <button
-                style={buttonStyle}
-                className={loader ? 'button-disabled' : ''}
-                onClick={insertTodo}
-                disabled={loader}
-            >
-                {IsSubmit ? 'Submit' : 'Edit'}
-            </button>
-            <ShowTask inputValue={inputValue} data={data} loading={loader} editTask={editTask} deleteTask={deleteTask} />
+                <button
+                    style={buttonStyle}
+                    className={loader ? 'button-disabled' : ''}
+                    onClick={insertTodo}
+                    disabled={loader}
+                >
+                    {IsSubmit ? 'Submit' : 'Edit'}
+                </button>
+
+            </div>
+
+
+            <div className="task-container">
+                <ShowTask data={data} loading={loader} editTask={editTask} deleteTask={deleteTask} />
+            </div>
         </>
 
     )

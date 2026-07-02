@@ -12,6 +12,7 @@ export default function Toast({ message }) {
         padding: "10px",
         borderRadius: "5px",
         display: message ? "block" : "none",
+        zIndex: 9999,
       }}
     >
       {message}
